@@ -197,7 +197,7 @@ GEM
     mina-whenever (1.0.0)
       mina (~> 1.0.0)
     mini_portile2 (2.2.0)
-    minitest (5.10.2)
+    minitest (5.10.3)
     multi_json (1.12.1)
     multi_xml (0.6.0)
     mysql2 (0.4.8)
@@ -218,7 +218,7 @@ GEM
       pry (~> 0.10)
     pry-rails (0.3.6)
       pry (>= 0.10.4)
-    puma (3.6.2)
+    puma (3.9.1)
     rack (2.0.3)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -352,7 +352,7 @@ DEPENDENCIES
   non-stupid-digest-assets
   pry-byebug
   pry-rails
-  puma (= 3.6.2)
+  puma
   rails (>= 5.0.0.rc2, < 5.1)
   rails_com!
   rails_log!

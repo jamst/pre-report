@@ -10171,3 +10171,210 @@ Processing by Admin::SessionsController#new as HTML
 Completed 200 OK in 11ms (Views: 9.8ms | ActiveRecord: 0.0ms)
 
 
+DEPRECATION WARNING: [SIMPLE_FORM] SimpleForm.form_class= is deprecated and will be removed in 4.x. Use SimpleForm.default_form_class= instead (called from block in <top (required)> at /Users/lijiangfeng/work/pre-report/config/initializers/simple_form_semantic.rb:64)
+  [1m[35m (18.5ms)[0m  [1m[35mCREATE TABLE `schema_migrations` (`version` varchar(255) PRIMARY KEY) ENGINE=InnoDB[0m
+  [1m[35m (13.9ms)[0m  [1m[35mCREATE TABLE `ar_internal_metadata` (`key` varchar(255) PRIMARY KEY, `value` varchar(255), `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL) ENGINE=InnoDB[0m
+  [1m[36mActiveRecord::SchemaMigration Load (5.3ms)[0m  [1m[34mSELECT `schema_migrations`.* FROM `schema_migrations`[0m
+  [1m[35m (13.7ms)[0m  [1m[35mCREATE TABLE `employees` (`id` int AUTO_INCREMENT PRIMARY KEY, `email` varchar(255) DEFAULT '' NOT NULL COMMENT 'email', `encrypted_password` varchar(255) DEFAULT '' NOT NULL COMMENT '密码', `parent_id` int DEFAULT 0 COMMENT '上级ID', `created_at` datetime NOT NULL COMMENT '创建日期', `updated_at` datetime NOT NULL COMMENT '修改日期', `name` varchar(20) COMMENT '名字', `department_id` int DEFAULT 0 NOT NULL COMMENT '部门ID', `position_id` int DEFAULT 0 NOT NULL COMMENT '职位： 0:其它 6:财务 7:产品经理....', `position_level` int DEFAULT 0 NOT NULL COMMENT '行政级别 0:员工 1:主管 2:经理 3:总监', `job_status` int DEFAULT 1 NOT NULL COMMENT '在职状态, 1:在职, -1:离职', `weight` float(24) DEFAULT 1.0 NOT NULL COMMENT '权重', `joined_on` date COMMENT '入职日期', `gender` int COMMENT '性别 0:男 1:女', `mobile` varchar(30) COMMENT '手机', `qq` varchar(30) COMMENT 'QQ', `office_tel` varchar(30) COMMENT '公司电话', `dob` date COMMENT '生日', `remember_created_at` datetime COMMENT '记住创建日期', `deputy_department_id` int DEFAULT 0 COMMENT '副部门', `avatar` varchar(100) COMMENT '员工头像', `assign_count` int DEFAULT 0 COMMENT '分配点数', `handover_id` int DEFAULT 0 COMMENT '交接人', UNIQUE INDEX `index_employees_on_email` USING btree (`email`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '员工表'[0m
+  [1m[35m (108.1ms)[0m  [1m[35mCREATE TABLE `roles` (`id` int AUTO_INCREMENT PRIMARY KEY, `name` varchar(255) COMMENT '角色名称', `name_cn` varchar(255) COMMENT '中文名', `created_at` datetime COMMENT '创建日期', `updated_at` datetime COMMENT '修改日期',  INDEX `index_roles_on_name` USING btree (`name`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '角色表'[0m
+  [1m[35m (20.5ms)[0m  [1m[35mCREATE TABLE `temporary_charts` (`id` int AUTO_INCREMENT PRIMARY KEY, `temporary_report_id` int COMMENT '关联的报表', `tab_x_axis` varchar(255) COMMENT 'x轴tab', `y_axis` varchar(255) COMMENT 'y轴数据', `chart_data` text COMMENT '图表数据定义(取关联报表数据源或重定义sql数据源)', `note` varchar(255) COMMENT '备注', `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8[0m
+  [1m[35m (17.7ms)[0m  [1m[35mCREATE TABLE `temporary_reports` (`id` int AUTO_INCREMENT PRIMARY KEY, `name` varchar(255) COMMENT '名称描述', `base_sql` text COMMENT 'sql脚本', `note` text COMMENT '报表需求描述', `columns` text COMMENT '报表字段', `head_html` text COMMENT '搜索html', `created_at` datetime NOT NULL COMMENT '创建时间', `updated_at` datetime NOT NULL COMMENT '修改时间', `active` int DEFAULT 1 COMMENT '是否有效,0:无效, 1:有效, -1:删除', `roles` varchar(255) COMMENT '相关的角色权限', `parent_id` int DEFAULT 0 COMMENT 'n父子关系，-1当前为父报表，o默认值', `report_type` int DEFAULT 0 COMMENT '报表类型，0普通报表，1关联报表 ,2合成报表', `composite_sentence` text COMMENT '合并报表描述dsl', `jump_links` varchar(512) COMMENT '攥取链接设置') ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '临时报表'[0m
+  [1m[35m (15.7ms)[0m  [1m[35mCREATE TABLE `report_conditions` (`id` int AUTO_INCREMENT PRIMARY KEY, `temporary_report_id` int, `name` varchar(255) COMMENT '条件名称', `report_key` varchar(255) COMMENT '条件字段', `report_condition` varchar(255) COMMENT '条件脚本', `view_type` varchar(255) COMMENT '条件展示方式：select/下拉框，text/文本框，data/时间框', `view_value` varchar(255) COMMENT '当为下拉框时，显示内容', `created_at` datetime NOT NULL, `updated_at` datetime NOT NULL, `default_value` varchar(255) COMMENT '默认值',  INDEX `index_report_conditions_on_temporary_report_id` USING btree (`temporary_report_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8[0m
+  [1m[35m (16.7ms)[0m  [1m[35mCREATE TABLE `employees_roles` (`employee_id` int COMMENT '员工ID', `role_id` int COMMENT '员工权限',  INDEX `index_employees_roles_on_employee_id_and_role_id` USING btree (`employee_id`, `role_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '员工权限表'[0m
+  [1m[35m (18.0ms)[0m  [1m[35mCREATE TABLE `employees_temporary_reports` (`employee_id` int, `temporary_report_id` int,  INDEX `temporary_reports_employees_index` USING btree (`employee_id`, `temporary_report_id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35mSQL (0.4ms)[0m  [1m[32mINSERT INTO `employees` (`email`, `encrypted_password`, `created_at`, `updated_at`, `name`) VALUES ('107422244@qq.com', '$2a$10$FdNNZDFK/wDQlk2t.xcwUuN3rmLlHm96.ZN.ilhxTOJaLuRD4ghJO', '2017-07-21 22:47:27', '2017-07-21 22:47:27', 'jamst')[0m
+  [1m[35m (1.3ms)[0m  [1m[35mCOMMIT[0m
+DEPRECATION WARNING: [SIMPLE_FORM] SimpleForm.form_class= is deprecated and will be removed in 4.x. Use SimpleForm.default_form_class= instead (called from block in <top (required)> at /Users/lijiangfeng/work/pre-report/config/initializers/simple_form_semantic.rb:64)
+Started GET "/" for 127.0.0.1 at 2017-07-21 22:47:44 +0800
+Processing by TemporaryReportsController#index as HTML
+Completed 401 Unauthorized in 21ms (ActiveRecord: 0.0ms)
+
+
+Started GET "/admin/login" for 127.0.0.1 at 2017-07-21 22:47:44 +0800
+Processing by Admin::SessionsController#new as HTML
+  Rendering admin/sessions/new.html.erb
+  Rendered admin/sessions/new.html.erb (19007.2ms)
+Completed 200 OK in 19046ms (Views: 19015.9ms | ActiveRecord: 1.4ms)
+
+
+Started POST "/admin/login" for 127.0.0.1 at 2017-07-21 22:48:14 +0800
+Processing by Admin::SessionsController#create as HTML
+  Parameters: {"utf8"=>"✓", "authenticity_token"=>"BMiYmBGn21F2sU97iN9GtSEODav24lwqLbsPKpNXlhwZmadiG1jOxWt2uauSQoWWYCVH2Ud91G7Mf0foVtnD/Q==", "employee"=>{"email"=>"107422244@qq.com", "password"=>"[FILTERED]", "remember_me"=>"1"}, "commit"=>"登录"}
+  [1m[36mEmployee Load (0.8ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`email` = '107422244@qq.com' ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[35m (0.1ms)[0m  [1m[35mBEGIN[0m
+  [1m[35mSQL (1.8ms)[0m  [1m[33mUPDATE `employees` SET `remember_created_at` = '2017-07-21 22:48:14', `updated_at` = '2017-07-21 22:48:14' WHERE `employees`.`id` = 1[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCOMMIT[0m
+Redirected to http://localhost:3000/temporary_reports
+Completed 302 Found in 136ms (ActiveRecord: 3.2ms)
+
+
+Started GET "/temporary_reports" for 127.0.0.1 at 2017-07-21 22:48:14 +0800
+Processing by TemporaryReportsController#index as HTML
+  [1m[36mEmployee Load (0.7ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+Creating scope :test. Overwriting existing method TemporaryReport.test.
+  Rendering temporary_reports/index.html.erb within layouts/application
+  [1m[36mTemporaryReport Load (0.6ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE (parent_id < 1 and report_type != 10 ) ORDER BY `temporary_reports`.`id` DESC LIMIT 20 OFFSET 0[0m
+  Rendered collection of temporary_reports/_list.html.erb [0 times] (0.0ms)
+  Rendered temporary_reports/index.html.erb within layouts/application (12.3ms)
+  Rendered shared/admin/_top_bar.html.erb (1.4ms)
+  Rendered shared/admin/_sidebar.html.erb (0.6ms)
+  Rendered /Users/lijiangfeng/.rvm/gems/ruby-2.4.0@pre-report/bundler/gems/rails_com-ec61fbf3bd0f/app/views/shared/_alert.html.erb (0.5ms)
+Completed 200 OK in 81ms (Views: 40.9ms | ActiveRecord: 1.6ms)
+
+
+Started GET "/temporary_reports/new" for 127.0.0.1 at 2017-07-21 22:48:25 +0800
+Processing by TemporaryReportsController#new as JS
+  [1m[36mEmployee Load (0.5ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  Rendering temporary_reports/new.js.erb
+  Rendered temporary_reports/_new.html.erb (20.7ms)
+  Rendered temporary_reports/new.js.erb (37.5ms)
+Completed 200 OK in 118ms (Views: 72.2ms | ActiveRecord: 2.5ms)
+
+
+Started POST "/temporary_reports" for 127.0.0.1 at 2017-07-21 22:49:14 +0800
+Processing by TemporaryReportsController#create as JS
+  Parameters: {"utf8"=>"✓", "temporary_report"=>{"name"=>"test", "jump_links"=>"", "columns"=>"name email", "base_sql"=>"select * from employees ", "note"=>"", "head_html"=>"", "report_condition"=>{"0"=>{"name"=>"开始时间", "report_key"=>"start_time", "report_condition"=>" and created_at >= '\#{@start_time}' ", "default_value"=>"2017-07-20 22:48:25 +0800"}, "1"=>{"name"=>"结束时间", "report_key"=>"end_time", "report_condition"=>" and created_at < '\#{@end_time}' ", "default_value"=>"2017-07-21 22:48:25 +0800"}}}}
+  [1m[36mEmployee Load (0.5ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+Unpermitted parameter: report_condition
+  [1m[35mSQL (0.6ms)[0m  [1m[32mINSERT INTO `temporary_reports` (`name`, `base_sql`, `note`, `columns`, `head_html`, `created_at`, `updated_at`, `jump_links`) VALUES ('test', 'select * from employees ', '', 'name email', '', '2017-07-21 22:49:14', '2017-07-21 22:49:14', '')[0m
+  [1m[35mSQL (0.3ms)[0m  [1m[32mINSERT INTO `report_conditions` (`temporary_report_id`, `name`, `report_key`, `report_condition`, `created_at`, `updated_at`, `default_value`) VALUES (1, '开始时间', 'start_time', ' and created_at >= \'#{@start_time}\' ', '2017-07-21 22:49:14', '2017-07-21 22:49:14', '2017-07-20 22:48:25 +0800')[0m
+  [1m[35mSQL (0.5ms)[0m  [1m[32mINSERT INTO `report_conditions` (`temporary_report_id`, `name`, `report_key`, `report_condition`, `created_at`, `updated_at`, `default_value`) VALUES (1, '结束时间', 'end_time', ' and created_at < \'#{@end_time}\' ', '2017-07-21 22:49:14', '2017-07-21 22:49:14', '2017-07-21 22:48:25 +0800')[0m
+  [1m[35m (0.4ms)[0m  [1m[35mCOMMIT[0m
+  Rendering temporary_reports/create.js.erb
+  Rendered temporary_reports/_list.html.erb (4.1ms)
+  Rendered temporary_reports/create.js.erb (20.3ms)
+Completed 200 OK in 89ms (Views: 47.9ms | ActiveRecord: 2.4ms)
+
+
+Started GET "/temporary_reports/report?id=1" for 127.0.0.1 at 2017-07-21 22:49:17 +0800
+Processing by TemporaryReportsController#report as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mEmployee Load (0.5ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.5ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  [1m[36mReportCondition Load (0.4ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  [1m[35m (0.3ms)[0m  [1m[34mselect * from employees [0m
+  [1m[36mTemporaryChart Load (0.4ms)[0m  [1m[34mSELECT `temporary_charts`.* FROM `temporary_charts` WHERE `temporary_charts`.`temporary_report_id` = 1[0m
+  Rendering temporary_reports/report.html.erb within layouts/application
+  Rendered temporary_reports/report.html.erb within layouts/application (4.3ms)
+  Rendered shared/admin/_top_bar.html.erb (2.9ms)
+  Rendered shared/admin/_sidebar.html.erb (1.2ms)
+  Rendered /Users/lijiangfeng/.rvm/gems/ruby-2.4.0@pre-report/bundler/gems/rails_com-ec61fbf3bd0f/app/views/shared/_alert.html.erb (0.5ms)
+Completed 200 OK in 64ms (Views: 38.7ms | ActiveRecord: 2.8ms)
+
+
+Started GET "/temporary_reports" for 127.0.0.1 at 2017-07-21 22:49:26 +0800
+Processing by TemporaryReportsController#index as HTML
+  [1m[36mEmployee Load (0.5ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  Rendering temporary_reports/index.html.erb within layouts/application
+  [1m[36mTemporaryReport Load (0.4ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE (parent_id < 1 and report_type != 10 ) ORDER BY `temporary_reports`.`id` DESC LIMIT 20 OFFSET 0[0m
+  Rendered collection of temporary_reports/_list.html.erb [1 times] (1.9ms)
+  Rendered temporary_reports/index.html.erb within layouts/application (9.7ms)
+  Rendered shared/admin/_top_bar.html.erb (1.3ms)
+  Rendered shared/admin/_sidebar.html.erb (0.4ms)
+  Rendered /Users/lijiangfeng/.rvm/gems/ruby-2.4.0@pre-report/bundler/gems/rails_com-ec61fbf3bd0f/app/views/shared/_alert.html.erb (0.5ms)
+Completed 200 OK in 35ms (Views: 31.3ms | ActiveRecord: 0.9ms)
+
+
+Started GET "/temporary_reports/1/edit" for 127.0.0.1 at 2017-07-21 22:49:29 +0800
+Processing by TemporaryReportsController#edit as JS
+  Parameters: {"id"=>"1"}
+  [1m[36mEmployee Load (0.4ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.6ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  Rendering temporary_reports/edit.js.erb
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`parent_id` = 1[0m
+  [1m[36mReportCondition Load (0.3ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  Rendered temporary_reports/_edit.html.erb (24.2ms)
+  Rendered temporary_reports/edit.js.erb (39.5ms)
+Completed 200 OK in 89ms (Views: 71.0ms | ActiveRecord: 1.7ms)
+
+
+Started PUT "/temporary_reports/1" for 127.0.0.1 at 2017-07-21 22:49:42 +0800
+Processing by TemporaryReportsController#update as JS
+  Parameters: {"utf8"=>"✓", "temporary_report"=>{"name"=>"test", "jump_links"=>"", "columns"=>"name email", "base_sql"=>"select name,email from employees ", "note"=>"", "head_html"=>"", "report_condition"=>{"0"=>{"name"=>"开始时间", "report_key"=>"start_time", "report_condition"=>" and created_at >= '\#{@start_time}' ", "default_value"=>"2017-07-20 22:48:25 +0800", "id"=>"1"}, "1"=>{"name"=>"结束时间", "report_key"=>"end_time", "report_condition"=>" and created_at < '\#{@end_time}' ", "default_value"=>"2017-07-21 22:48:25 +0800", "id"=>"2"}}}, "id"=>"1"}
+  [1m[36mEmployee Load (0.5ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.4ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  [1m[35m (0.2ms)[0m  [1m[35mBEGIN[0m
+Unpermitted parameter: report_condition
+  [1m[35mSQL (0.3ms)[0m  [1m[33mUPDATE `temporary_reports` SET `base_sql` = 'select name,email from employees ', `updated_at` = '2017-07-21 22:49:42' WHERE `temporary_reports`.`id` = 1[0m
+  [1m[36mReportCondition Load (0.3ms)[0m  [1m[34mSELECT  `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`id` = 1 LIMIT 1[0m
+  [1m[36mReportCondition Load (0.3ms)[0m  [1m[34mSELECT  `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`id` = 2 LIMIT 1[0m
+  [1m[35m (1.2ms)[0m  [1m[35mCOMMIT[0m
+  Rendering temporary_reports/update.js.erb
+  Rendered temporary_reports/_list.html.erb (3.9ms)
+  Rendered temporary_reports/update.js.erb (17.7ms)
+Completed 200 OK in 74ms (Views: 47.0ms | ActiveRecord: 3.3ms)
+
+
+Started GET "/temporary_reports/report?id=1" for 127.0.0.1 at 2017-07-21 22:49:43 +0800
+Processing by TemporaryReportsController#report as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mEmployee Load (0.4ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  [1m[36mReportCondition Load (0.3ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  [1m[35m (0.2ms)[0m  [1m[34mselect name,email from employees [0m
+  [1m[36mTemporaryChart Load (0.4ms)[0m  [1m[34mSELECT `temporary_charts`.* FROM `temporary_charts` WHERE `temporary_charts`.`temporary_report_id` = 1[0m
+  Rendering temporary_reports/report.html.erb within layouts/application
+  Rendered temporary_reports/report.html.erb within layouts/application (5.6ms)
+  Rendered shared/admin/_top_bar.html.erb (1.5ms)
+  Rendered shared/admin/_sidebar.html.erb (0.7ms)
+  Rendered /Users/lijiangfeng/.rvm/gems/ruby-2.4.0@pre-report/bundler/gems/rails_com-ec61fbf3bd0f/app/views/shared/_alert.html.erb (0.5ms)
+Completed 200 OK in 40ms (Views: 31.9ms | ActiveRecord: 1.6ms)
+
+
+Started GET "/temporary_reports/report?id=1" for 127.0.0.1 at 2017-07-21 22:49:53 +0800
+Processing by TemporaryReportsController#report as HTML
+  Parameters: {"id"=>"1"}
+  [1m[36mEmployee Load (0.3ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  [1m[36mReportCondition Load (0.5ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  [1m[35m (0.4ms)[0m  [1m[34mselect name,email from employees [0m
+  [1m[36mTemporaryChart Load (0.4ms)[0m  [1m[34mSELECT `temporary_charts`.* FROM `temporary_charts` WHERE `temporary_charts`.`temporary_report_id` = 1[0m
+  Rendering temporary_reports/report.html.erb within layouts/application
+  Rendered temporary_reports/report.html.erb within layouts/application (4.0ms)
+  Rendered shared/admin/_top_bar.html.erb (1.4ms)
+  Rendered shared/admin/_sidebar.html.erb (0.6ms)
+  Rendered /Users/lijiangfeng/.rvm/gems/ruby-2.4.0@pre-report/bundler/gems/rails_com-ec61fbf3bd0f/app/views/shared/_alert.html.erb (0.8ms)
+Completed 200 OK in 40ms (Views: 30.1ms | ActiveRecord: 2.0ms)
+
+
+Started GET "/temporary_reports/report?id=1&report_params%5Bend_time%5D=2017-07-21+22%3A48%3A25+%2B0800&report_params%5Bstart_time%5D=2017-07-20+22%3A48%3A25+%2B0800&xls=true" for 127.0.0.1 at 2017-07-21 22:49:54 +0800
+Processing by TemporaryReportsController#report as HTML
+  Parameters: {"id"=>"1", "report_params"=>{"end_time"=>"2017-07-21 22:48:25 +0800", "start_time"=>"2017-07-20 22:48:25 +0800"}, "xls"=>"true"}
+  [1m[36mEmployee Load (0.3ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  [1m[36mReportCondition Load (0.4ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  [1m[35m (0.3ms)[0m  [1m[34mselect name,email from employees [0m
+  Rendering text template
+  Rendered text template (0.0ms)
+Sent data 2017-07-21 22:49:54 +0800.xls (1.8ms)
+Completed 200 OK in 14ms (Views: 1.6ms | ActiveRecord: 1.2ms)
+
+
+Started GET "/temporary_reports/1/edit" for 127.0.0.1 at 2017-07-22 00:28:04 +0800
+Processing by TemporaryReportsController#edit as JS
+  Parameters: {"id"=>"1"}
+  [1m[36mEmployee Load (0.4ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  Rendering temporary_reports/edit.js.erb
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`parent_id` = 1[0m
+  [1m[36mReportCondition Load (0.3ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  Rendered temporary_reports/_edit.html.erb (35.5ms)
+  Rendered temporary_reports/edit.js.erb (46.8ms)
+Completed 200 OK in 89ms (Views: 75.5ms | ActiveRecord: 1.3ms)
+
+
+Started GET "/temporary_reports/1/edit" for 127.0.0.1 at 2017-07-22 00:41:29 +0800
+Processing by TemporaryReportsController#edit as JS
+  Parameters: {"id"=>"1"}
+  [1m[36mEmployee Load (0.4ms)[0m  [1m[34mSELECT  `employees`.* FROM `employees` WHERE `employees`.`id` = 1 ORDER BY `employees`.`id` ASC LIMIT 1[0m
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT  `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`id` = 1 LIMIT 1[0m
+  Rendering temporary_reports/edit.js.erb
+  [1m[36mTemporaryReport Load (0.3ms)[0m  [1m[34mSELECT `temporary_reports`.* FROM `temporary_reports` WHERE `temporary_reports`.`parent_id` = 1[0m
+  [1m[36mReportCondition Load (0.4ms)[0m  [1m[34mSELECT `report_conditions`.* FROM `report_conditions` WHERE `report_conditions`.`temporary_report_id` = 1[0m
+  Rendered temporary_reports/_edit.html.erb (20.0ms)
+  Rendered temporary_reports/edit.js.erb (32.5ms)
+Completed 200 OK in 73ms (Views: 58.9ms | ActiveRecord: 1.3ms)
+
+
