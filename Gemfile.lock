@@ -50,15 +50,6 @@ GIT
       rails (>= 5.0.1)
 
 GIT
-  remote: https://github.com/qinmingyuan/rails_log.git
-  revision: 838a2c7ea096788a2808a5c35d168ad551a159e2
-  tag: v2.0
-  specs:
-    rails_log (1.0)
-      rails (~> 5.0)
-      rails_com (~> 1.0.0)
-
-GIT
   remote: https://github.com/rails/sass-rails.git
   revision: dd04a6a6d19cbd7cfd2f9d304a445444e0b88a19
   specs:
@@ -355,7 +346,6 @@ DEPENDENCIES
   puma (= 3.6.2)
   rails (>= 5.0.0.rc2, < 5.1)
   rails_com!
-  rails_log!
   rake
   remotipart (~> 1.2)
   rolify

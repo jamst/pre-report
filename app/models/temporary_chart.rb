@@ -2,7 +2,8 @@ class TemporaryChart < ApplicationRecord
   belongs_to :temporary_report	
 
   enum chart_type: {
-    line_chart: 0   #折线图
+    line: 0,   #折线图
+    bar: 1   #柱状图
   }
 
   def get_report_sql(params)
