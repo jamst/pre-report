@@ -4,12 +4,31 @@
   <div class="content">
     <%= simple_form_for @temporary_chart, url: chart_report_temporary_reports_path, remote: true, method: :get do |f| %>
         <div class="two fields">
-          <%= f.input :y_axis %>
+          <%= f.input :chart_type, as: :select, collection: select_options_from_enum(TemporaryChart, :chart_type), include_blank: false,label:"图表类型", wrapper_html: {style: 'display: block'}, input_html: {class: 'ui fluid dropdown'} %>
+          <%= f.input :y_axis,label:"Y轴数据" %>
         </div>
         <%= hidden_field_tag :id,@temporary_report.id%>
         <%= f.hidden_field :temporary_report_id%>
         <%= f.text_area :chart_data , placeholder: "数据源"%></br></br>
         <%= f.text_area :note , placeholder: "描述"%></br></br>
+
+        <% @temporary_chart.child_charts.each  do |chart| %>
+         <div class="two fields" id="chart_of_<%= chart.id %>"> 
+           <div class="field"><textarea placeholder="Y轴数据" name="parent_chart[y_axis][]" ><%= chart[:y_axis] %></textarea></div>
+           <div class="field"><textarea placeholder="数据源" name="parent_chart[chart_data][]"><%= chart[:chart_data] %></textarea></div
+           <input type="hidden" value="<%= report.id %>" name="parent_chart[id][]">
+           <%= link_to delete_chart_temporary_reports_path(id: chart.id), method: :delete, remote: true, data: {confirm: '确认删除此子图表'} do %>
+            <i class="ui icon close red spec_close"  style="margin-top: 28px;"></i>
+           <% end %>
+         </div>
+        <% end %>
+
+        <div id="parent_charts"></div>
+
+        <div class="field">
+          <i class="ui icon plus green" style="cursor: pointer;" onClick="add_new_line(this);"></i>
+        </div>
+
         <div class="column">
           <%= f.submit '提交', class: 'ui primary button' %>
         </div>
