@@ -7,3 +7,14 @@
   $('#chart_report').modal('setting', {autofocus: false}).modal('show');
   $(".select.dropdown").dropdown();
 <% end %>
+
+// 添加关联报表
+var add_new_report = function(){
+  $('#parent_charts').append('<div class="two fields spec"> <div class="field"><textarea placeholder="Y轴数据" name="parent_chart[y_axis][]" ></textarea></div><div class="field"><textarea placeholder="数据源" name="parent_chart[chart_data][]"></textarea></div><i class="ui icon close red spec_close"  style="margin-top: 28px;"></i></div>');
+}
+
+  
+// 删除搜索配置条件
+  $('#new_temporary_report').on('click','.spec_close',function(){
+    $(this).parents(".spec").remove();
+  });

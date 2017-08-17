@@ -17,4 +17,14 @@ class TemporaryChart < ApplicationRecord
     sql = eval %Q( %Q(#{self.chart_data}) ) 
   end
 
+  def child_charts
+    TemporaryChart.where(parent_id:self.id)
+  end
+
+  def parent
+    TemporaryChart.find(self.parent_id)
+  end
+
+  
+
 end
