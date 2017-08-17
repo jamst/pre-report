@@ -79,6 +79,12 @@ class TemporaryReportsController < ApplicationController
     @temporary_report.delete
   end
 
+  def delete_chart
+    @temporary_chart = TemporaryChart.find(params[:id])
+    @temporary_chart_id = @temporary_chart.id
+    @temporary_chart.delete
+  end
+
   # 权限设置
   def set_report_permission
     if params[:temporary_report]
@@ -96,15 +102,25 @@ class TemporaryReportsController < ApplicationController
     end
   end
 
-  # 设置图标
+  # 设置图表
   def chart_report
     if @temporary_report.temporary_charts.present?
-      @temporary_chart = @temporary_report.temporary_charts.last
+      @temporary_chart = @temporary_report.temporary_charts.first
     else
       @temporary_chart = TemporaryChart.new(temporary_report_id:@temporary_report.id)
     end
     if params[:temporary_chart]
       @temporary_chart.update(chart_report_params) 
+
+      if params[:parent_chart]
+        params[:parent_chart][:y_axis].each_with_index do |chart,i|
+          parent_chart = params[:parent_chart].keys.inject({}){|o,j| o[j] = params[:parent_chart][j][i] ; o }
+          chart = parent_chart["id"] ? TemporaryChart.find(parent_chart["id"].to_i) : TemporaryChart.new
+          chart.assign_attributes(parent_chart.merge(parent_id:@temporary_chart.id , chart_type:@temporary_chart.chart_type , temporary_report_id:@temporary_chart.temporary_report_id ))
+          chart.save
+        end
+      end
+
     end
   end
 
