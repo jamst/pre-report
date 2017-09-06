@@ -147,11 +147,14 @@ class TemporaryReportsController < ApplicationController
       @q = SearchParams.new(params[:search_params] || {}) 
       # 配置条件
       @report_conditions = @temporary_report.report_conditions
+      @report_condition_tags = @report_conditions.where("input_source is not null and input_source != '' ")
       # 赋值默认值显示
       unless params[:search_params].present?
         params[:search_params] = {}
         @report_conditions.each do |c|
-          params[:search_params][c.report_key] = c.default_value
+          # 可变默认参数获取
+          default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
+          params[:search_params][c.report_key] = default_value
         end
       end
       # 报表名称
