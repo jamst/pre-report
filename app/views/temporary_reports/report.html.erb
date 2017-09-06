@@ -7,9 +7,30 @@
   </div>
 </div>
 
+<%if @temporary_report.head_html.present? || @report_condition_tags.present? %>
 <div class="ui blue segmen123t">
-  <%= raw @temporary_report.head_html %>
+  <%= simple_form_for @q,  url: report_admin_report_temporary_reports_path, method: :get, wrapper: 'semantic_search_form',id:"new_search_params" do |f| %>
+      <div class="ui five column grid">
+        <input name="utf8" type="hidden" value="✓">
+        <input type="hidden" name="id" id="id">
+        <%= raw @temporary_report.head_html %>
+        <% @report_condition_tags.each do |tag| %>
+          <% if tag.input_source.to_s.include? "@@" %>
+            <!-- 定制条件框 -->
+            <!-- 不放help里因为erb比help好写 -->
+            <%= render "/temporary_report/input_types/#{tag.input_source.strip.gsub('@@','')}" %>
+          <% else %>
+            <!-- 适配条件框 -->
+            <%= render "/temporary_report/input_types/#{tag.input_type}",tag: tag %>
+          <% end %>  
+        <% end %>
+        <div class="column">
+          <input type="submit" name="commit" value="搜索" class="ui primary button" data-disable-with="搜索">
+        </div>
+      </div>
+  <% end %>
 </div>
+<% end %>
 
 <div class="ui grid">
   <div class="left floated wide column">
