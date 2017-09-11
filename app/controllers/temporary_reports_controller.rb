@@ -79,6 +79,12 @@ class TemporaryReportsController < ApplicationController
     @temporary_report.delete
   end
 
+  def delete_chart
+    @temporary_chart = TemporaryChart.find(params[:id])
+    @temporary_chart_id = @temporary_chart.id
+    @temporary_chart.delete
+  end
+
   # 权限设置
   def set_report_permission
     if params[:temporary_report]
@@ -96,15 +102,25 @@ class TemporaryReportsController < ApplicationController
     end
   end
 
-  # 设置图标
+  # 设置图表
   def chart_report
     if @temporary_report.temporary_charts.present?
-      @temporary_chart = @temporary_report.temporary_charts.last
+      @temporary_chart = @temporary_report.temporary_charts.first
     else
       @temporary_chart = TemporaryChart.new(temporary_report_id:@temporary_report.id)
     end
     if params[:temporary_chart]
       @temporary_chart.update(chart_report_params) 
+
+      if params[:parent_chart]
+        params[:parent_chart][:y_axis].each_with_index do |chart,i|
+          parent_chart = params[:parent_chart].keys.inject({}){|o,j| o[j] = params[:parent_chart][j][i] ; o }
+          chart = parent_chart["id"] ? TemporaryChart.find(parent_chart["id"].to_i) : TemporaryChart.new
+          chart.assign_attributes(parent_chart.merge(parent_id:@temporary_chart.id , chart_type:@temporary_chart.chart_type , temporary_report_id:@temporary_chart.temporary_report_id ))
+          chart.save
+        end
+      end
+
     end
   end
 
@@ -131,11 +147,14 @@ class TemporaryReportsController < ApplicationController
       @q = SearchParams.new(params[:search_params] || {}) 
       # 配置条件
       @report_conditions = @temporary_report.report_conditions
+      @report_condition_tags = @report_conditions.where("input_source is not null and input_source != '' ")
       # 赋值默认值显示
       unless params[:search_params].present?
         params[:search_params] = {}
         @report_conditions.each do |c|
-          params[:search_params][c.report_key] = c.default_value
+          # 可变默认参数获取
+          default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
+          params[:search_params][c.report_key] = default_value
         end
       end
       # 报表名称

@@ -1,4 +1,10 @@
 module ApplicationHelper
+
+  def show_db_time(time)
+    if time.present?
+      time.localtime.to_s(:db)
+    end
+  end 
 	
   def select_options_from_enum(model,attribute,opts=nil)
     options = model.send(attribute.to_s.pluralize) if options.blank? && model.respond_to?(attribute.to_s.pluralize)
