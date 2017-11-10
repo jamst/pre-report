@@ -190,19 +190,49 @@ class TemporaryReportsController < ApplicationController
   end
 
   # 合并报表子报表
+  # 合并报表子报表
   def composite
     @moder_columns = []
     @moder = []
+    @sentence_expression = []
     arr = ('a'..'z').to_a
-    composite_sentence = @temporary_report.composite_sentence.split(",")
+    composite_sentence = @temporary_report.composite_sentence.split("|")[0].split(",")
+    composite_sentence_expression_str = @temporary_report.composite_sentence.split("|")[1].to_s
+    composite_sentence_expression = composite_sentence_expression_str.split(",")
     composite_sentence.each do |_|
       mod = arr.index(_[0])
       moder = (mod == 0 ? @execute_reports : @execute_child_reports[mod-1])
       mod_columns_size = _[1].to_i
-      @moder << moder.map{|_|_[mod_columns_size]}
+      moder_value = moder.map{|_|_[mod_columns_size]}
+
+      # 表达式运算
+      if composite_sentence_expression_str.present? && composite_sentence_expression_str.include?(_)
+        moder_value_set = moder.map{|_|_[mod_columns_size].to_f}
+        instance_variable_set("@#{_}_arr",moder_value_set)
+        @sentence_expression << "@#{_}"
+      end
+
+      @moder << moder_value
       moder_column = (mod == 0 ? @columns[mod_columns_size] : @child_columns[mod-1][mod_columns_size])
       @moder_columns << moder_column
     end
+
+    # 表达式运算
+    composite_sentence_expression.each do |_|
+      moder_column = _.split(":").first
+      @expression = _.split(":").last
+      moder_values = []
+      @moder.first.size.times do |i|
+        @sentence_expression.each do |ex|
+          moder_value_set = instance_variable_get("#{ex}_arr")[i]
+          instance_variable_set("#{ex}",moder_value_set)
+        end
+        moder_values << eval(@expression)
+      end
+      @moder << moder_values
+      @moder_columns << moder_column
+    end if composite_sentence_expression_str.present?
+    
     # 矩阵行列倒置
     @reports = Matrix.columns(@moder).to_a
     @columns = @moder_columns
@@ -213,6 +243,31 @@ class TemporaryReportsController < ApplicationController
       @reports = Kaminari.paginate_array(@reports, total_count: @reports.size).page(params[:page]).per(20) 
     end
   end
+
+
+  # def composite
+  #   @moder_columns = []
+  #   @moder = []
+  #   arr = ('a'..'z').to_a
+  #   composite_sentence = @temporary_report.composite_sentence.split(",")
+  #   composite_sentence.each do |_|
+  #     mod = arr.index(_[0])
+  #     moder = (mod == 0 ? @execute_reports : @execute_child_reports[mod-1])
+  #     mod_columns_size = _[1].to_i
+  #     @moder << moder.map{|_|_[mod_columns_size]}
+  #     moder_column = (mod == 0 ? @columns[mod_columns_size] : @child_columns[mod-1][mod_columns_size])
+  #     @moder_columns << moder_column
+  #   end
+  #   # 矩阵行列倒置
+  #   @reports = Matrix.columns(@moder).to_a
+  #   @columns = @moder_columns
+  #   # 合并报表子报表的下载xls
+  #   if params[:xls]
+  #     send_data ExecuteReport.to_xlsx(@report_name,@columns,@reports), type: 'text/xls', filename: "#{Time.now}#{@report_name}.xls"
+  #   else
+  #     @reports = Kaminari.paginate_array(@reports, total_count: @reports.size).page(params[:page]).per(20) 
+  #   end
+  # end
 
   # 图表
   def charts
