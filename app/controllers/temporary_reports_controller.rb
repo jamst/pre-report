@@ -238,7 +238,8 @@ class TemporaryReportsController < ApplicationController
     @columns = @moder_columns
     # 合并报表子报表的下载xls
     if params[:xls]
-      send_data ExecuteReport.to_xlsx(@report_name,@columns,@reports), type: 'text/xls', filename: "#{Time.now}#{@report_name}.xls"
+      search_conditions = @temporary_report.search_conditions(params)
+      send_data ExecuteReport.to_xlsx(@report_name,@columns,@reports,search_conditions), type: 'text/xls', filename: "#{Time.now}#{@report_name}.xls"
     else
       @reports = Kaminari.paginate_array(@reports, total_count: @reports.size).page(params[:page]).per(20) 
     end
@@ -318,7 +319,8 @@ class TemporaryReportsController < ApplicationController
   def to_xls
     @columns = @temporary_report.columns.split(" ")
     execute_report = ExecuteReport.new(@temporary_report.get_report_sql(params))
-    send_data execute_report.to_xlsx(@report_name,@columns), type: 'text/xls', filename: "#{Time.now}#{@report_name}.xls" 
+    search_conditions = @temporary_report.search_conditions(params)
+    send_data execute_report.to_xlsx(@report_name,@columns,search_conditions), type: 'text/xls', filename: "#{Time.now}#{@report_name}.xls" 
   end
 
 
