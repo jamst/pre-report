@@ -57,7 +57,7 @@
       <% @reports.each do |reports| %>
         <tr>
           <% reports.each_with_index do |_,index| %>
-            <td class="center aligned"> <%if @jump_links && @jump_links[index.to_s] %><% params[:search_params][@jump_links[index.to_s]] = _ %><%= link_to "#{_}", report_temporary_reports_path(id:@jump_links[index.to_s+"_id"],report_params:params[:search_params]) %> <% else %> <%= _ %> <% end %> </td>
+            <td class="center aligned"> <%if @jump_links && @jump_links[index.to_s] %><% params[:search_params][@jump_links[index.to_s]] = analyse_sql_fuction(_) %><%= link_to "#{analyse_sql_fuction(_)}", report_temporary_reports_path(id:@jump_links[index.to_s+"_id"],report_params:params[:search_params]) %> <% else %> <%= analyse_sql_fuction(_) %> <% end %> </td>
           <% end %> 
         </tr>
       <% end %>  
@@ -85,7 +85,7 @@
         <% child.each do |reports| %>
           <tr>
             <% reports.each do |_| %>
-              <td class="center aligned"> <%= _ %> </td>
+              <td class="center aligned"> <%= analyse_sql_fuction(_) %> </td>
             <% end %> 
           </tr>
         <% end %>  

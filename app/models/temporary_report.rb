@@ -33,4 +33,15 @@ class TemporaryReport < ApplicationRecord
     TemporaryReport.find(self.parent_id)
   end
 
+  def search_conditions(params)
+    conditions = self.general?||self.test?||self.parent_id == -1 ? self.report_conditions : self.parent.report_conditions
+    conditions_array = []
+    conditions.each do |c|
+      if params[:search_params].present? && params[:search_params]["#{c.report_key}"].present? 
+        conditions_array << (c.name + ":" + params[:search_params]["#{c.report_key}"].to_s) 
+      end
+    end  
+    conditions_array
+  end
+
 end

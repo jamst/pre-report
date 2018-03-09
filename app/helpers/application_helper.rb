@@ -24,4 +24,9 @@ module ApplicationHelper
     I18n.t(key,:default => value)
   end
 
+  # sql内函数解析
+  def analyse_sql_fuction(str)
+    str.is_a?(String) && (str.include?("@@")) ? eval(str.gsub("@@","")) : str
+  end
+
 end

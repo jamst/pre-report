@@ -22,12 +22,10 @@ class ExecuteReport
         start_i = 1
       end
       list.row(start_i).concat columns
-   
       report.each_with_index { |report_date, i|
+        report_date = analyse_sql_fuction(report_date)
         list.row(i+1+start_i).concat report_date
       }
-
-      list.row(report.size+5).concat search_conditions if search_conditions.present?
 
       xls_report = StringIO.new 
       file.write xls_report 
@@ -46,11 +44,35 @@ class ExecuteReport
       end
       list.row(start_i).concat columns
       report_data.each_with_index { |report, i|
+        report = analyse_sql_fuction(report)
         list.row(i+1+start_i).concat report
       }
       xls_report = StringIO.new 
       file.write xls_report 
       xls_report.string 
+  end
+
+  # sql内函数解析
+  def analyse_sql_fuction(report)
+    return report unless report.to_s.include?("@@")
+    reports = []
+    report.each do |str|
+      re = str.is_a?(String) && (str.include?("@@")) ? eval(str.gsub("@@","")) : str
+      reports << re
+    end 
+    reports 
+  end
+
+
+  # sql内函数解析
+  def self.analyse_sql_fuction(report)
+    return report unless report.to_s.include?("@@")
+    reports = []
+    report.each do |str|
+      re = str.is_a?(String) && (str.include?("@@")) ? eval(str.gsub("@@","")) : str
+      reports << re
+    end 
+    reports 
   end
 
 end    
