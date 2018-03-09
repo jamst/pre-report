@@ -132,12 +132,19 @@ class TemporaryReportsController < ApplicationController
 
   # 报表查看
   def report
+    return @message = "很抱歉，您还没有该报表的权限，请联系管理员。" unless @temporary_report.employee_ids.include?(current_employee.id) || current_employee.admin?
+
     # 解析下载excell参数
     if params[:report_params].present?
-      #ruby2.4已fix可直接解析
-      #report_params = params[:report_params].split("&").map{|_| a = _.split("="); a[1] = CGI.unescape("#{a[1]}") ; a if a.size == 2 }.compact  
-      params[:search_params] = params[:report_params]
-    end  
+     params[:search_params] = params[:report_params]  
+     # 纯粹的判断条件但又没有作为查询条件
+        @temporary_report.report_conditions.each do |c|
+          if !params[:search_params][c.report_condition].present? && (c.default_value.to_s.include? "@@")
+            default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
+            params[:search_params][c.report_key] = default_value
+          end
+        end
+    end
 
     jump_links
 
@@ -147,16 +154,23 @@ class TemporaryReportsController < ApplicationController
       @q = SearchParams.new(params[:search_params] || {}) 
       # 配置条件
       @report_conditions = @temporary_report.report_conditions
-      @report_condition_tags = @report_conditions.where("input_source is not null and input_source != '' ")
       # 赋值默认值显示
-      unless params[:search_params].present?
+      if params[:search_params].present?
+        # 纯粹的判断条件但又没有作为查询条件
+        @report_conditions.each do |c|
+          if params[:search_params][c.report_key]==nil && (c.default_value.to_s.include? "@@")
+            default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
+            params[:search_params][c.report_key] = default_value
+          end
+        end
+      else  
         params[:search_params] = {}
         @report_conditions.each do |c|
-          # 可变默认参数获取
           default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
           params[:search_params][c.report_key] = default_value
         end
       end
+
       # 报表名称
       @report_name = @temporary_report.name
       # 搜索html
@@ -173,6 +187,8 @@ class TemporaryReportsController < ApplicationController
       # 图表
       charts if @temporary_report.temporary_charts
     end 
+    # 关闭按数据连接
+    ActiveRecord::Base.connection.close 
   end
 
   # 关联报表子报表
