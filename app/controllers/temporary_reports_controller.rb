@@ -206,8 +206,31 @@ class TemporaryReportsController < ApplicationController
   end
 
   # 合并报表子报表
-  # 合并报表子报表
   def composite
+    # (默认内容最多的sql放在父亲sql，关键列放在左边)
+    # 当多sql数据行不一致时，按照合并关键列补充空数据
+    unless (@execute_child_reports.inject([]){|o,j| o<<j.size } << @execute_reports.size).uniq.size == 1
+      # 查询合并关键列列数
+      @composite_columns = @columns & @child_columns.first
+      @new_execute_child_reports = ("[] " * @child_columns.size).split(" ").map{|_|eval(_)}
+      @execute_reports.each_with_index do |parent_report,i|
+        base_columns = parent_report[0..@composite_columns.size-1]
+        @execute_child_reports.each_with_index do |child_report,j|
+          compare_columns = child_report.map{|child| child[0..@composite_columns.size-1] }
+          if compare_columns.include? base_columns
+            child_report_index = compare_columns.index(base_columns)
+            @new_execute_child_reports[j][i] = child_report.to_a[child_report_index]
+          else
+            create_child_columns = ("- " * @child_columns[j].size).split(" ") 
+            create_child_columns[0..@composite_columns.size-1] = base_columns
+            @new_execute_child_reports[j][i] = create_child_columns
+          end
+        end
+      end
+      # 重新赋值
+      @execute_child_reports =  @new_execute_child_reports
+    end
+
     @moder_columns = []
     @moder = []
     @sentence_expression = []
@@ -243,12 +266,12 @@ class TemporaryReportsController < ApplicationController
           moder_value_set = instance_variable_get("#{ex}_arr")[i]
           instance_variable_set("#{ex}",moder_value_set)
         end
-        moder_values << eval(@expression)
+        moder_values << eval(@expression).to_f.round(2)
       end
       @moder << moder_values
       @moder_columns << moder_column
     end if composite_sentence_expression_str.present?
-    
+
     # 矩阵行列倒置
     @reports = Matrix.columns(@moder).to_a
     @columns = @moder_columns
@@ -260,31 +283,6 @@ class TemporaryReportsController < ApplicationController
       @reports = Kaminari.paginate_array(@reports, total_count: @reports.size).page(params[:page]).per(20) 
     end
   end
-
-
-  # def composite
-  #   @moder_columns = []
-  #   @moder = []
-  #   arr = ('a'..'z').to_a
-  #   composite_sentence = @temporary_report.composite_sentence.split(",")
-  #   composite_sentence.each do |_|
-  #     mod = arr.index(_[0])
-  #     moder = (mod == 0 ? @execute_reports : @execute_child_reports[mod-1])
-  #     mod_columns_size = _[1].to_i
-  #     @moder << moder.map{|_|_[mod_columns_size]}
-  #     moder_column = (mod == 0 ? @columns[mod_columns_size] : @child_columns[mod-1][mod_columns_size])
-  #     @moder_columns << moder_column
-  #   end
-  #   # 矩阵行列倒置
-  #   @reports = Matrix.columns(@moder).to_a
-  #   @columns = @moder_columns
-  #   # 合并报表子报表的下载xls
-  #   if params[:xls]
-  #     send_data ExecuteReport.to_xlsx(@report_name,@columns,@reports), type: 'text/xls', filename: "#{Time.now}#{@report_name}.xls"
-  #   else
-  #     @reports = Kaminari.paginate_array(@reports, total_count: @reports.size).page(params[:page]).per(20) 
-  #   end
-  # end
 
   # 图表
   def charts
