@@ -139,7 +139,7 @@ class TemporaryReportsController < ApplicationController
      params[:search_params] = params[:report_params]  
      # 纯粹的判断条件但又没有作为查询条件
         @temporary_report.report_conditions.each do |c|
-          if !params[:search_params][c.report_condition].present? && (c.default_value.to_s.include? "@@")
+          if !c.report_condition.present? && (c.default_value.to_s.include? "@@")
             default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
             params[:search_params][c.report_key] = default_value
           end
@@ -158,7 +158,7 @@ class TemporaryReportsController < ApplicationController
       if params[:search_params].present?
         # 纯粹的判断条件但又没有作为查询条件
         @report_conditions.each do |c|
-          if params[:search_params][c.report_key]==nil && (c.default_value.to_s.include? "@@")
+          if !c.report_condition.present? && ( c.default_value.to_s.include? "@@")
             default_value = (c.default_value.to_s.include? "@@") ?  eval(c.default_value.strip.gsub("@@","")) : c.default_value
             params[:search_params][c.report_key] = default_value
           end
