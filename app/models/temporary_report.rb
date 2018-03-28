@@ -23,6 +23,7 @@ class TemporaryReport < ApplicationRecord
       )
     end
     sql = eval %Q( %Q(#{self.base_sql}) ) 
+    sql = (sql.downcase.include?("delete") || sql.downcase.include?("truncate")) ? "select 'SQL不允许有危险字断出现' " : sql
   end
 
   def child_reports
