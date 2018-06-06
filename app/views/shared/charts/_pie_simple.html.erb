@@ -1,0 +1,65 @@
+<%= javascript_include_tag 'echarts.min' %>
+<script type="text/javascript">
+    var div_tag = "<%= div_id %>"
+    var myChart = echarts.init(document.getElementById(div_tag));
+    myChart.setOption({
+        title : {
+            text: '<%= chart_title %>',
+            subtext: '<%= show_time %>',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        series : [
+            {
+                name: '访问来源',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '60%'],
+                data:[
+                    <% @report_arrys.each do |c|%>
+                    {value:<%=c["v"]%>, name:"<%=c["k"]%>"},
+                    <% end %>
+                ],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    });
+
+</script>
+
+
+
+
+<!-- 访客省市分布 -->
+<!-- 
+  <div id="line_chart2" style="float: left; width:25%;height:400px; "></div>
+   <%# @report_arrys = Ad::UserTracking.find_by_sql(" select 
+    case 
+     when companies.company_type = 1 then '中小型实验室'
+     when companies.company_type = 2 then '精细化工厂'
+     when companies.company_type = 3 then '高校研发机构'
+     when companies.company_type = 4 then '品牌试剂商'
+     when companies.company_type = 5 then 'CRO'
+     when companies.company_type = 6 then 'CMO'
+     when companies.company_type = 7 then '贸易公司'
+     when companies.company_type = 9 then '个人实验室'
+     when companies.company_type = 10 then '工厂贸易'
+     when companies.company_type = 11 then '实验室贸易'
+     else '其他' end as k, count(*)as 'v'
+    from order_details
+    left join users
+    on users.id = order_details.vendor_id
+    left join companies 
+    on companies.id = users.company_id 
+    group by k") %>
+  <%#= render 'shared/charts/pie_simple',div_id:"line_chart2",chart_title:"供应商类型分布",show_time:Time.now.yesterday.to_date %>
+ -->
