@@ -154,6 +154,7 @@ class TemporaryReportsController < ApplicationController
       @q = SearchParams.new(params[:search_params] || {}) 
       # 配置条件
       @report_conditions = @temporary_report.report_conditions
+      @report_condition_tags = @temporary_report.report_conditions.where("input_source is not null")
       # 赋值默认值显示
       if params[:search_params].present?
         # 纯粹的判断条件但又没有作为查询条件
