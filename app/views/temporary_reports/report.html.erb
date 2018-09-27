@@ -12,7 +12,7 @@
   <%= simple_form_for @q,  url: report_admin_report_temporary_reports_path, method: :get, wrapper: 'semantic_search_form',id:"new_search_params" do |f| %>
       <div class="ui five column grid">
         <input name="utf8" type="hidden" value="✓">
-        <input type="hidden" name="id" id="id">
+        <input type="hidden" name="id" id="id" value="<%= @temporary_report.id %>">
         <%= raw @temporary_report.head_html %>
         <% @report_condition_tags.each do |tag| %>
           <% if tag.input_source.to_s.include? "@@" %>
