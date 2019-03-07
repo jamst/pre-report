@@ -1,0 +1,114 @@
+<%= javascript_include_tag 'echarts.min' %>
+<script type="text/javascript">
+
+var colors = ['#ea0000', '#9f35ff', '#00e3e3', '#5793f3', '#d14a61', '#675bba','ffde33','660099','#ea0000', '#9f35ff', '#00e3e3', '#5793f3', '#d14a61', '#675bba','ffde33','660099']
+
+var div_tag = "<%= div_id %>"
+
+var myChart = echarts.init(document.getElementById(div_tag));
+myChart.setOption({
+    color: colors,
+
+    tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+            type: 'cross'
+        }
+    },
+    grid: {
+        right: '20%',
+    },
+    toolbox: {
+        feature: {
+            dataView: {show: true, readOnly: false},
+            restore: {show: true},
+            saveAsImage: {show: true}
+        }
+    },
+    legend: {
+    	data:<%=raw (yy + yyb) %>
+    },
+    xAxis: [
+        {
+            type: 'category',
+            axisTick: {
+                alignWithLabel: true
+            },
+            data: <%=raw xx %>
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value',
+            name: '数量',
+            min: 0,
+            max: <%= yb_data[1].flatten.max  %> ,
+            position: 'left',
+            axisLine: {
+                lineStyle: {
+                    color: colors[2]
+                }
+            },
+            axisLabel: {
+                formatter: '{value} '
+            }
+        },
+        {
+            type: 'value',
+            name: '金额',
+            min: 0,
+            max: <%= yb_data.flatten.max %>,
+            position: 'right',
+            axisLine: {
+                lineStyle: {
+                    color: colors[0]
+                }
+            },
+            axisLabel: {
+                formatter: '{value} '
+            }
+        },
+        {
+            type: 'value',
+            name: '环比变化',
+            min: <%= [y_data.flatten.min.abs,y_data.flatten.max.abs].max * -1 %>,
+            max: <%= [y_data.flatten.min.abs,y_data.flatten.max.abs].max %>,
+            position: 'right',
+            offset: 80,
+            axisLine: {
+                lineStyle: {
+                    color: colors[1]
+                }
+            },
+            axisLabel: {
+                formatter: '{value} %'
+            }
+        }
+    ],
+    series: [
+        <% yy.each_with_index do |y,index|%>
+            {
+                name:'<%= y %>',
+                type: "line",
+                yAxisIndex: 2,
+                data: eval("("+"<%= y_data[index] %>".replace(/&quot;/g,"")+")")
+            },
+         <% end %>
+        <% yyb.each_with_index do |y,index|%>
+            {
+                name:'<%= y %>',
+                type: "bar",
+                yAxisIndex: <%= y.include?('数') ? 0 : 1 %>,
+                data: eval("("+"<%= yb_data[index] %>".replace(/&quot;/g,"")+")"),
+	            label: {
+	                normal: {
+	                    show: true,
+	                    position: 'top'
+	                }
+	            } 
+            },
+         <% end %>
+    ]
+});
+
+</script>

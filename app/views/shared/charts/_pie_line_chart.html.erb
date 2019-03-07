@@ -1,0 +1,69 @@
+
+<script type="text/javascript">
+var div_tag = "<%= div_id %>"
+var myChart = echarts.init(document.getElementById(div_tag));
+
+var option = {
+        legend: {},
+        tooltip: {
+            trigger: 'axis',
+            showContent: false
+        },
+        dataset: {
+            source: <%=raw y_data %>
+        },
+        xAxis: {type: 'category'},
+        yAxis: {gridIndex: 0},
+        grid: {top: '55%'},
+        series: [
+            <% (y_data.class == String ? eval(y_data) : y_data).each_with_index do |y,index|%>
+
+            {
+                type: 'line', 
+                smooth: true,
+                seriesLayoutBy: 'row',
+                markLine : {
+                    data : [ {type:'average', name:'平均值'}]
+                    }
+            },
+
+            <% end %>
+            {
+                type: 'pie',
+                id: 'pie',
+                radius: '30%',
+                center: ['50%', '25%'],
+                label: {
+                    formatter: '{b}: {@<%= xx[1] %>} ({d}%)'
+                },
+                encode: {
+                    itemName: 'product',
+                    value: '<%= xx[1]%>',
+                    tooltip: '<%= xx[1] %>'
+                }
+            }
+        ]
+    };
+
+    myChart.on('updateAxisPointer', function (event) {
+        var xAxisInfo = event.axesInfo[0];
+        if (xAxisInfo) {
+            var dimension = xAxisInfo.value + 1;
+            myChart.setOption({
+                series: {
+                    id: 'pie',
+                    label: {
+                        formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                    },
+                    encode: {
+                        value: dimension,
+                        tooltip: dimension
+                    }
+                }
+            });
+        }
+    });
+
+    myChart.setOption(option);
+
+</script>
